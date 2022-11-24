@@ -1,0 +1,189 @@
+<!doctype html> 
+
+<html>
+<head>
+    <title>Labyrinthe</title>
+    <script language="JavaScript">
+        m='m'; //représente un mur
+        p='p'; //représente le personnage
+        b='b'; //représente le chemin
+        f="f"; //représente le trophée 
+
+        xperso=1; //position initial du personnage sur l'axe X
+        yperso=1; //postition initial du personnage sur l'axe Y
+        //tableau à double entrée représentant votre labyrinthe, vous pouvez le modifier pour comprendre le fonctionnement
+        var laby = [[m,m,m,m,m,m,m,m,m,m],
+                    [m,p,m,b,b,b,b,b,b,m],
+                    [m,b,m,b,m,m,m,b,m,m],
+                    [m,b,m,b,m,b,m,b,b,m],
+                    [m,b,b,b,m,b,m,m,b,m],
+                    [m,b,m,b,m,b,b,b,b,f],
+                    [m,m,m,m,m,m,m,m,m,m]];
+
+        function afficheLaby() //ne rien modifier dans cette fonction
+        {
+            var leLaby=document.getElementById("laby");
+            insertion="<table border=0 cellspacing=0 cellpadding=0>";
+
+            for(i=0;i<7;i++)
+            {
+            insertion+="<tr>";
+                for(j=0;j<10;j++)
+                {
+                    switch(laby[i][j]){
+                        case m:
+                        insertion+="<td>";
+                        insertion+="<img width='52'height='52' src='Assets/stonewall.png'>";
+                        insertion+="</td>";
+                        break;
+                        case p:
+                        insertion+="<td>";
+                        insertion+="<img width='52' height='52' style='background-image:Assets/Ground.png' src='Assets/Heros.png'>";
+                        insertion+="</td>";
+                        break;
+                        case b :
+                        insertion+="<td>";
+                        insertion+="<img width='52' height='52' src='Assets/Ground.png'>";
+                        insertion+="</td>";
+                        break;
+                        case f :
+                        insertion+="<td>";
+                        insertion+="<img width='52' height='52'src='Assets/Trophy.png'>";
+                        insertion+="</td>";
+                        break;
+                    }
+                }
+                insertion+="</tr>";
+            }  
+            insertion+="</table>";
+            leLaby.innerHTML=insertion;
+        }
+
+        function enHaut() {
+            if(laby[xperso-1][yperso] == b){
+                laby[xperso-1][yperso] = p
+                laby[xperso][yperso] = b
+                xperso = xperso - 1
+            }
+            if(laby[xperso-1][yperso] == f){
+                laby[xperso-1][yperso] = p
+                laby[xperso][yperso] = b
+                var txt=document.getElementById("win")
+                txt.innerHTML+="C'est gagné"
+            }
+            afficheLaby()
+        }
+        function enBas() {
+            if(laby[xperso+1][yperso] == b){
+                laby[xperso+1][yperso] = p
+                laby[xperso][yperso] = b
+                xperso = xperso + 1
+            }
+            if(laby[xperso+1][yperso] == f){
+                laby[xperso+1][yperso] = p
+                laby[xperso][yperso] = b
+                var txt=document.getElementById("win")
+                txt.innerHTML+="C'est gagné"
+            }
+            afficheLaby()
+        }
+        function aGauche(){
+            if(laby[xperso][yperso-1] == b){
+                laby[xperso][yperso-1] = p
+                laby[xperso][yperso] = b
+                yperso = yperso - 1
+            }
+            if(laby[xperso][yperso-1] == f){
+                laby[xperso][yperso-1] = p
+                laby[xperso][yperso] = b
+                var txt=document.getElementById("win")
+                    txt.innerHTML+="C'est gagné"
+            }
+            afficheLaby()            
+        }
+        function aDroite(){
+            if(laby[xperso][yperso+1] == b){
+                laby[xperso][yperso+1] = p
+                laby[xperso][yperso] = b
+                yperso = yperso + 1
+            }
+            if(laby[xperso][yperso+1] == f){
+                laby[xperso][yperso+1] = p
+                laby[xperso][yperso] = b
+                var txt=document.getElementById("win")
+                    txt.innerHTML+="C'est gagné"
+                
+            }
+            afficheLaby()         
+        }
+
+
+document.onkeydown =checkKey;
+function checkKey(e){
+    if (e.keyCode == "38"){
+        enHaut()
+    }
+    else if(e.keyCode== "40"){
+        enBas()
+    }
+    else if(e.keyCode== "37"){
+        aGauche()
+    }
+    else if(e.keyCode== "39"){
+        aDroite()
+    }
+} 
+        var centi = 0;
+        var mili = 0;
+        var sec = 0;
+        document.getElementById('time').innerHTML = "0" + sec + ":" + "0" + mili;
+    </script>
+</head>
+    <body>
+        <div id="laby">
+
+        </div>
+
+    <input type="button" value="GO" onclick="afficheLaby();chrono();"><br/><BR><BR>
+
+    <!-- ajouter vos boutons de déplacement ici -->
+        <input type="button" value="Haut" onclick="enHaut();">
+        <input type="button" value="Bas" onclick="enBas();">
+        <input type="button" value="Gauche" onclick="aGauche();">
+        <input type="button" value="Droite" onclick="aDroite();">
+
+<div id="time"></div>
+<p id="win"></p>
+<script>
+    document.getElementById('time').innerHTML = "0" + sec + ":" + "0" + mili;
+    function chrono() {
+            var stop=setInterval(function (){
+                mili++;
+                    if (mili > 9) {
+                        mili = 0;
+                    }
+            }, 1);
+            clearInterval(stop)
+            centi++;
+            centi*10;//=======pour passer en dixièmes de sec
+            //=== on remet à zéro quand on passe à 1seconde
+            if (centi > 9) {
+                centi = 0;
+                sec++;
+            }  
+
+            if (sec < 10) {
+                sec_ = "0" + sec;
+            }
+            else {
+                sec_ = sec;
+            }
+                
+            afficher = sec_ + ":" + centi + mili;
+            document.getElementById("time").innerHTML = afficher;
+            
+            reglage = window.setTimeout("chrono();",100);
+        }
+</script>
+</body>
+</html>
